@@ -1,6 +1,5 @@
 package com.meesho.notificationservice.service;
 
-
 import com.meesho.notificationservice.models.SearchEntity;
 import com.meesho.notificationservice.models.request.SearchRequest;
 import com.meesho.notificationservice.repository.SearchRepository;
@@ -18,41 +17,29 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ElasticSearchServiceTest {
-
-
     @InjectMocks
     ElasticSearchService elasticSearchService;
-
     @Mock
     SearchRepository searchRepository;
 
-
-
     @Test
     public void searchWithinTimeRangeTest(){
-
         int pageNumber = 0 ;
         SearchRequest searchRequest = SearchRequest.builder().phoneNumber("+912345678901").startCreatedAt(1234).endCreatedAt(2345).build();
         SearchEntity searchEntity = SearchEntity.builder().phoneNumber("+912345678901").build();
-
-        when(searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(searchRequest.getPhoneNumber(), searchRequest.getStartCreatedAt(), searchRequest.getEndCreatedAt(), PageRequest.of(0,50)))
+        when(searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(searchRequest.getPhoneNumber(), searchRequest.getStartCreatedAt(), searchRequest.getEndCreatedAt(), PageRequest.of(pageNumber,50)))
                 .thenReturn(Collections.singletonList(searchEntity));
         assertEquals(1 ,elasticSearchService.searchWithinTimeRange(searchRequest, pageNumber).size() );
-
     }
 
     @Test
     public void searchByMessageTest(){
-
         int pageNumber = 0 ;
         SearchRequest searchRequest = SearchRequest.builder().message("Meesho").build();
         SearchEntity searchEntity = SearchEntity.builder().phoneNumber("+912345678901").build();
-
-        when(searchRepository.findByMessageContaining(searchRequest.getMessage() , PageRequest.of(0,50)))
+        when(searchRepository.findByMessageContaining(searchRequest.getMessage() , PageRequest.of(pageNumber,50)))
                 .thenReturn(Collections.singletonList(searchEntity));
-
         assertEquals(1 ,elasticSearchService.searchByMessage(searchRequest, pageNumber).size() );
-
     }
 
     @Test
@@ -61,5 +48,4 @@ public class ElasticSearchServiceTest {
         elasticSearchService.save(searchEntity);
         verify(searchRepository, times(1)).save(searchEntity);
     }
-
 }

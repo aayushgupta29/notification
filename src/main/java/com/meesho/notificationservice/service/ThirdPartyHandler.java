@@ -22,7 +22,6 @@ import static com.meesho.notificationservice.constants.Constants.THIRD_PARTY_URL
 
 @Service
 public class ThirdPartyHandler {
-
     private static final Logger LOGGER  = LoggerFactory.getLogger(ThirdPartyHandler.class);
     @Autowired
     private RestTemplate restTemplate;
@@ -32,7 +31,6 @@ public class ThirdPartyHandler {
     private ElasticSearchService elasticSearchService;
 
     public void sendThirdPartySms(SmsRequest smsRequest){
-
         ResponseFrom3P.Response response = new ResponseFrom3P.Response();
         try{
             MessageDetailsFor3P messageDetailsFor3P = prepareMessageDetails(smsRequest);
@@ -46,7 +44,7 @@ public class ThirdPartyHandler {
             smsRequest.setStatus("FAILED");
             smsRequest.setFailureCode("ERR_THIRDPARTYTIMEOUT");
             smsRequestRepository.save(smsRequest);
-            LOGGER.error(String.format("Message not sent fun error"));
+            LOGGER.error(String.format("Error from third Party"));
             return;
         }
         if(response.getCode().equals("1001")){
@@ -67,11 +65,12 @@ public class ThirdPartyHandler {
     }
 
     private void addToElasticSearch(SmsRequest smsRequest){
-        SearchEntity searchEntity = new SearchEntity();
-        searchEntity.setId(smsRequest.getId());
-        searchEntity.setPhoneNumber(smsRequest.getPhoneNumber());
-        searchEntity.setMessage(smsRequest.getMessage());
-        searchEntity.setCreatedAt(smsRequest.getCreatedAt());
+        SearchEntity searchEntity = SearchEntity.builder()
+                .id(smsRequest.getId())
+                .phoneNumber(smsRequest.getPhoneNumber())
+                .message(smsRequest.getMessage())
+                .createdAt(smsRequest.getCreatedAt())
+                .build();
         elasticSearchService.save(searchEntity);
     }
 
@@ -90,7 +89,6 @@ public class ThirdPartyHandler {
     }
 
     private HttpEntity<MessageDetailsFor3P> prepareHttpEntity(MessageDetailsFor3P messageDetailsFor3P){
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("key", KEY);
@@ -99,7 +97,6 @@ public class ThirdPartyHandler {
     }
 
     private ResponseFrom3P sendMessageVia3P(MessageDetailsFor3P messageDetailsFor3P){
-
         HttpEntity<MessageDetailsFor3P> entity = prepareHttpEntity(messageDetailsFor3P);
         try{
             return restTemplate.postForObject(

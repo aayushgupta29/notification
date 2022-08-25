@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Error {
     private HttpStatus status;
     private String code;

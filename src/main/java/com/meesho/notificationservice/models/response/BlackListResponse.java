@@ -18,13 +18,9 @@ public class BlackListResponse {
 
     @Nullable
     private List<String> phoneNumbers ;
-
     @Nullable
     private  String message;
-
     @Nullable
     private String error;
-
-
 
 }

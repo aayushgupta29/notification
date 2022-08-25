@@ -11,7 +11,6 @@ import static com.meesho.notificationservice.constants.Constants.TOPIC;
 @Service
 public class Producer {
     private static final Logger logger = LoggerFactory.getLogger(Producer.class);
-
     @Autowired
     private KafkaTemplate<String, Integer> kafkaTemplate;
 

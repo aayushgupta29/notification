@@ -19,28 +19,23 @@ public class SearchController {
 
     @Autowired
     private ElasticSearchService elasticSearchService;
-
     @Autowired
     private SearchRepository searchRepository;
 
     @GetMapping("/time/{pageNumber}")
     public ResponseEntity<SearchResponse> searchWithinTimeRange(@RequestBody SearchRequest request, @PathVariable int pageNumber){
         List<SearchEntity> allMessagesInTimeRange = elasticSearchService.searchWithinTimeRange(request, pageNumber);
-
-        return new ResponseEntity<>(new SearchResponse(allMessagesInTimeRange), HttpStatus.OK);
-
+        return  ResponseEntity.ok(new SearchResponse(allMessagesInTimeRange));
     }
 
     @GetMapping("/message/{pageNumber}")
     public ResponseEntity<SearchResponse> searchByMessage(@RequestBody SearchRequest request, @PathVariable int pageNumber){
         List<SearchEntity> searchedMessages = elasticSearchService.searchByMessage(request, pageNumber);
-
-        return new ResponseEntity<>(new SearchResponse(searchedMessages), HttpStatus.OK);
-
+        return  ResponseEntity.ok(new SearchResponse(searchedMessages));
     }
 
     @GetMapping("/getAll")
     public ResponseEntity<Iterable<SearchEntity> > findAll(){
-        return new ResponseEntity<>(searchRepository.findAll(), HttpStatus.OK);
+        return ResponseEntity.ok(searchRepository.findAll());
     }
 }

@@ -10,13 +10,11 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 public class NotificationServiceApplication {
+    private static final Logger LOGGER = LogManager.getLogger(NotificationServiceApplication.class);
 
     public static void main(String[] args) {
-        System.out.println("in main class");
         SpringApplication.run(NotificationServiceApplication.class, args);
     }
-
-    private static final Logger LOGGER = LogManager.getLogger(NotificationServiceApplication.class);
 
     @Bean
     public RestTemplate getRestTemplate() {
@@ -28,6 +26,4 @@ public class NotificationServiceApplication {
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
         return restTemplate;
     }
-
-
 }

@@ -18,7 +18,6 @@ public class SmsRequestService {
     private Producer producer;
 
     public SuccessResponseEntity sendSms(SmsRequest smsRequest) throws BadRequestException, NotFoundException {
-
         isValidSmsRequest(smsRequest);
         smsRequest.setStatus("KAFKA_SEND");
         smsRequest.setCreatedAt(System.currentTimeMillis());
@@ -28,7 +27,6 @@ public class SmsRequestService {
     }
 
     public SmsRequest findSmsRequest(int id) throws BadRequestException, NotFoundException{
-
         SmsRequest smsRequested  = smsRequestRepository.findById(id);
         if(smsRequested == null){
             throw new NotFoundException("RequestId not found");
@@ -40,6 +38,5 @@ public class SmsRequestService {
         if(!Utils.isValidPhoneNumber(smsRequest.getPhoneNumber()) || smsRequest.getMessage().equals("") ){
             throw new BadRequestException("Fields are not valid");
         }
-
     }
 }

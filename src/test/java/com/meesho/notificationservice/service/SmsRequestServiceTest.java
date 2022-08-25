@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SmsRequestServiceTest {
-
     @Mock
     SmsRequestRepository smsRequestRepository;
     @Mock
@@ -31,17 +30,11 @@ public class SmsRequestServiceTest {
     public void findSmsRequestTest(){
         SmsRequest smsRequest =  SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").id(0).build();
         when(smsRequestRepository.findById(0)).thenReturn(smsRequest);
-        try {
-            assertEquals(smsRequest, smsRequestService.findSmsRequest(0));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
+        assertEquals(smsRequest, smsRequestService.findSmsRequest(0));
     }
 
     @Test
     public void findSmsRequestWithInValidIdTest(){
-        SmsRequest smsRequest =  SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").id(0).build();
         when(smsRequestRepository.findById(1)).thenReturn(null);
         assertThatThrownBy(() -> smsRequestService.findSmsRequest(1)).isInstanceOf(NotFoundException.class).hasMessage("RequestId not found");
     }
@@ -50,7 +43,7 @@ public class SmsRequestServiceTest {
     public void sendSmsTest()  {
         SmsRequest smsRequest = SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").build();
         int smsRequestId = smsRequest.getId();
-        SuccessResponseEntity successResponseEntity = new SuccessResponseEntity(smsRequestId, "hi its successful");
+        SuccessResponseEntity successResponseEntity = SuccessResponseEntity.builder().request_id (smsRequestId).comment( "hi its successful").build();
         Mockito.doNothing().when(producer).sendMessage(smsRequest.getId());
         when(smsRequestRepository.save(smsRequest)).thenReturn(smsRequest);
         SuccessResponseEntity response = smsRequestService.sendSms(smsRequest);
@@ -68,5 +61,4 @@ public class SmsRequestServiceTest {
         SmsRequest smsRequest = SmsRequest.builder().phoneNumber("+912340998765").message("").build();
         assertThatThrownBy(() -> smsRequestService.sendSms(smsRequest)).isInstanceOf(BadRequestException.class).hasMessage("Fields are not valid");
     }
-
 }

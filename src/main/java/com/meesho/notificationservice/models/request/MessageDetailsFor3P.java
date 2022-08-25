@@ -22,8 +22,6 @@ public class MessageDetailsFor3P {
     @Getter @Setter  @ToString @Builder
     public static class Channels{
         private Sms sms;
-
-
     }
     @Getter @Setter @ToString @Builder
     public static class  Sms{

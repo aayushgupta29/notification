@@ -18,7 +18,6 @@ import static com.meesho.notificationservice.constants.Constants.TOPIC;
 
 @Service
 public class Consumer {
-
     private static final Logger LOGGER  = LoggerFactory.getLogger(KafkaConsumer.class);
     @Autowired
     private SmsRequestRepository smsRequestRepository;
@@ -29,11 +28,8 @@ public class Consumer {
 
     @KafkaListener(topics=TOPIC, groupId="myGroup")
     public void consumer(int messageId) {
-
         LOGGER.info(String.format("MESSAGE has been received %s", messageId));
-
         SmsRequest smsRequest = smsRequestRepository.findById(messageId);
-
         boolean isPhoneNumberBlacklisted = blacklistService.getStatusOfBlacklistNumber(smsRequest.getPhoneNumber());
 
         if(isPhoneNumberBlacklisted){
