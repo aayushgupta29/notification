@@ -13,7 +13,9 @@ import org.springframework.data.domain.PageRequest;
 import java.util.Collections;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ElasticSearchServiceTest {
@@ -23,27 +25,27 @@ public class ElasticSearchServiceTest {
     SearchRepository searchRepository;
 
     @Test
-    public void searchWithinTimeRangeTest(){
-        int pageNumber = 0 ;
+    public void searchWithinTimeRangeTest() {
+        int pageNumber = 0;
         SearchRequest searchRequest = SearchRequest.builder().phoneNumber("+912345678901").startCreatedAt(1234).endCreatedAt(2345).build();
         SearchEntity searchEntity = SearchEntity.builder().phoneNumber("+912345678901").build();
-        when(searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(searchRequest.getPhoneNumber(), searchRequest.getStartCreatedAt(), searchRequest.getEndCreatedAt(), PageRequest.of(pageNumber,50)))
+        when(searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(searchRequest.getPhoneNumber(), searchRequest.getStartCreatedAt(), searchRequest.getEndCreatedAt(), PageRequest.of(pageNumber, 50)))
                 .thenReturn(Collections.singletonList(searchEntity));
-        assertEquals(1 ,elasticSearchService.searchWithinTimeRange(searchRequest, pageNumber).size() );
+        assertEquals(1, elasticSearchService.searchWithinTimeRange(searchRequest, pageNumber).size());
     }
 
     @Test
-    public void searchByMessageTest(){
-        int pageNumber = 0 ;
+    public void searchByMessageTest() {
+        int pageNumber = 0;
         SearchRequest searchRequest = SearchRequest.builder().message("Meesho").build();
         SearchEntity searchEntity = SearchEntity.builder().phoneNumber("+912345678901").build();
-        when(searchRepository.findByMessageContaining(searchRequest.getMessage() , PageRequest.of(pageNumber,50)))
+        when(searchRepository.findByMessageContaining(searchRequest.getMessage(), PageRequest.of(pageNumber, 50)))
                 .thenReturn(Collections.singletonList(searchEntity));
-        assertEquals(1 ,elasticSearchService.searchByMessage(searchRequest, pageNumber).size() );
+        assertEquals(1, elasticSearchService.searchByMessage(searchRequest, pageNumber).size());
     }
 
     @Test
-    public void saveTest(){
+    public void saveTest() {
         SearchEntity searchEntity = SearchEntity.builder().phoneNumber("+912345678901").build();
         elasticSearchService.save(searchEntity);
         verify(searchRepository, times(1)).save(searchEntity);

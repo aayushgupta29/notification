@@ -1,6 +1,5 @@
 package com.meesho.notificationservice.models.request;
 
-
 import com.meesho.notificationservice.models.BlacklistPhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,15 +1,15 @@
 package com.meesho.notificationservice.models.response;
 
-
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-@ToString
+@Data
 @Builder
-public class SuccessResponseEntity{
+public class SuccessResponseEntity {
 
     private int request_id;
     private String comment;

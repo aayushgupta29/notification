@@ -22,7 +22,7 @@ import static com.meesho.notificationservice.constants.Constants.THIRD_PARTY_URL
 
 @Service
 public class ThirdPartyHandler {
-    private static final Logger LOGGER  = LoggerFactory.getLogger(ThirdPartyHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ThirdPartyHandler.class);
     @Autowired
     private RestTemplate restTemplate;
     @Autowired
@@ -30,31 +30,29 @@ public class ThirdPartyHandler {
     @Autowired
     private ElasticSearchService elasticSearchService;
 
-    public void sendThirdPartySms(SmsRequest smsRequest){
+    public void sendThirdPartySms(SmsRequest smsRequest) {
         ResponseFrom3P.Response response = new ResponseFrom3P.Response();
-        try{
+        try {
             MessageDetailsFor3P messageDetailsFor3P = prepareMessageDetails(smsRequest);
             ResponseFrom3P responseFrom3P = sendMessageVia3P(messageDetailsFor3P);
             response = responseFrom3P.getResponse().get(0);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             smsRequest.setUpdatedAt(System.currentTimeMillis());
             smsRequest.setFailureComments("Either third party key is not right or any other parameter is wrong");
             smsRequest.setStatus("FAILED");
-            smsRequest.setFailureCode("ERR_THIRDPARTYTIMEOUT");
+            smsRequest.setFailureCode("ERR_THIRD_PARTY_TIMEOUT");
             smsRequestRepository.save(smsRequest);
             LOGGER.error(String.format("Error from third Party"));
             return;
         }
-        if(response.getCode().equals("1001")){
+        if (response.getCode().equals("1001")) {
             addToElasticSearch(smsRequest);
             smsRequest.setUpdatedAt(System.currentTimeMillis());
             smsRequest.setStatus("SUCCESS");
             smsRequestRepository.save(smsRequest);
             LOGGER.info("in success");
-        }
-        else{
+        } else {
             smsRequest.setUpdatedAt(System.currentTimeMillis());
             smsRequest.setFailureComments("Message not sent successful third party API give error");
             smsRequest.setStatus("FAILURE");
@@ -64,7 +62,7 @@ public class ThirdPartyHandler {
         }
     }
 
-    private void addToElasticSearch(SmsRequest smsRequest){
+    private void addToElasticSearch(SmsRequest smsRequest) {
         SearchEntity searchEntity = SearchEntity.builder()
                 .id(smsRequest.getId())
                 .phoneNumber(smsRequest.getPhoneNumber())
@@ -74,38 +72,37 @@ public class ThirdPartyHandler {
         elasticSearchService.save(searchEntity);
     }
 
-    private MessageDetailsFor3P prepareMessageDetails(SmsRequest smsRequest){
+    private MessageDetailsFor3P prepareMessageDetails(SmsRequest smsRequest) {
         return MessageDetailsFor3P.builder()
-            .deliverychannel("sms")
-            .channels(MessageDetailsFor3P.Channels.builder()
-                .sms(MessageDetailsFor3P.Sms.builder().text(smsRequest.getMessage()).build()).build())
-            .destination(
-                Collections.singletonList(
-                    MessageDetailsFor3P.Destination.builder()
-                       .correlationId(String.valueOf(smsRequest.getId()))
-                       .msisdn(Collections.singletonList(smsRequest.getPhoneNumber()))
-                       .build()))
-            .build();
+                .deliverychannel("sms")
+                .channels(MessageDetailsFor3P.Channels.builder()
+                        .sms(MessageDetailsFor3P.Sms.builder().text(smsRequest.getMessage()).build()).build())
+                .destination(
+                        Collections.singletonList(
+                                MessageDetailsFor3P.Destination.builder()
+                                        .correlationId(String.valueOf(smsRequest.getId()))
+                                        .msisdn(Collections.singletonList(smsRequest.getPhoneNumber()))
+                                        .build()))
+                .build();
     }
 
-    private HttpEntity<MessageDetailsFor3P> prepareHttpEntity(MessageDetailsFor3P messageDetailsFor3P){
+    private HttpEntity<MessageDetailsFor3P> prepareHttpEntity(MessageDetailsFor3P messageDetailsFor3P) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("key", KEY);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        return  new HttpEntity<>(messageDetailsFor3P, headers);
+        return new HttpEntity<>(messageDetailsFor3P, headers);
     }
 
-    private ResponseFrom3P sendMessageVia3P(MessageDetailsFor3P messageDetailsFor3P){
+    private ResponseFrom3P sendMessageVia3P(MessageDetailsFor3P messageDetailsFor3P) {
         HttpEntity<MessageDetailsFor3P> entity = prepareHttpEntity(messageDetailsFor3P);
-        try{
+        try {
             return restTemplate.postForObject(
                     THIRD_PARTY_URL, entity, ResponseFrom3P.class
             );
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return  new ResponseFrom3P();
+            return new ResponseFrom3P();
         }
     }
 }

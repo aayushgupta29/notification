@@ -15,12 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlackListResponse {
-
     @Nullable
-    private List<String> phoneNumbers ;
+    private List<String> phoneNumbers;
     @Nullable
-    private  String message;
+    private String message;
     @Nullable
     private String error;
-
 }

@@ -23,19 +23,19 @@ public class SmsRequestService {
         smsRequest.setCreatedAt(System.currentTimeMillis());
         smsRequestRepository.save(smsRequest);
         producer.sendMessage(smsRequest.getId());
-        return new SuccessResponseEntity(smsRequest.getId(), "hi its successful");
+        return SuccessResponseEntity.builder().request_id(smsRequest.getId()).comment("hi its successful").build();
     }
 
-    public SmsRequest findSmsRequest(int id) throws BadRequestException, NotFoundException{
-        SmsRequest smsRequested  = smsRequestRepository.findById(id);
-        if(smsRequested == null){
+    public SmsRequest findSmsRequest(int id) throws BadRequestException, NotFoundException {
+        SmsRequest smsRequested = smsRequestRepository.findById(id);
+        if (smsRequested == null) {
             throw new NotFoundException("RequestId not found");
         }
         return smsRequested;
     }
 
     public void isValidSmsRequest(SmsRequest smsRequest) {
-        if(!Utils.isValidPhoneNumber(smsRequest.getPhoneNumber()) || smsRequest.getMessage().equals("") ){
+        if (!Utils.isValidPhoneNumber(smsRequest.getPhoneNumber()) || smsRequest.getMessage().equals("")) {
             throw new BadRequestException("Fields are not valid");
         }
     }

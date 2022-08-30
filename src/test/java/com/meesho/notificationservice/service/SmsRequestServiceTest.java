@@ -1,6 +1,5 @@
 package com.meesho.notificationservice.service;
 
-
 import com.meesho.notificationservice.exceptions.BadRequestException;
 import com.meesho.notificationservice.exceptions.NotFoundException;
 import com.meesho.notificationservice.models.SmsRequest;
@@ -9,9 +8,10 @@ import com.meesho.notificationservice.repository.SmsRequestRepository;
 import com.meesho.notificationservice.service.kafka.Producer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
@@ -27,23 +27,23 @@ public class SmsRequestServiceTest {
     SmsRequestService smsRequestService;
 
     @Test
-    public void findSmsRequestTest(){
-        SmsRequest smsRequest =  SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").id(0).build();
+    public void findSmsRequestTest() {
+        SmsRequest smsRequest = SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").id(0).build();
         when(smsRequestRepository.findById(0)).thenReturn(smsRequest);
         assertEquals(smsRequest, smsRequestService.findSmsRequest(0));
     }
 
     @Test
-    public void findSmsRequestWithInValidIdTest(){
+    public void findSmsRequestWithInValidIdTest() {
         when(smsRequestRepository.findById(1)).thenReturn(null);
         assertThatThrownBy(() -> smsRequestService.findSmsRequest(1)).isInstanceOf(NotFoundException.class).hasMessage("RequestId not found");
     }
 
     @Test
-    public void sendSmsTest()  {
+    public void sendSmsTest() {
         SmsRequest smsRequest = SmsRequest.builder().phoneNumber("+912345678901").message("Meesho").build();
         int smsRequestId = smsRequest.getId();
-        SuccessResponseEntity successResponseEntity = SuccessResponseEntity.builder().request_id (smsRequestId).comment( "hi its successful").build();
+        SuccessResponseEntity successResponseEntity = SuccessResponseEntity.builder().request_id(smsRequestId).comment("hi its successful").build();
         Mockito.doNothing().when(producer).sendMessage(smsRequest.getId());
         when(smsRequestRepository.save(smsRequest)).thenReturn(smsRequest);
         SuccessResponseEntity response = smsRequestService.sendSms(smsRequest);

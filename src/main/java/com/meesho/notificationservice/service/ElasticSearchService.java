@@ -15,7 +15,7 @@ public class ElasticSearchService {
     private SearchRepository searchRepository;
 
     public List<SearchEntity> searchWithinTimeRange(SearchRequest request, int pageNumber) {
-        List<SearchEntity> searchedMessages = searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(request.getPhoneNumber(),  request.getStartCreatedAt(), request.getEndCreatedAt(), PageRequest.of(pageNumber,50));
+        List<SearchEntity> searchedMessages = searchRepository.findByPhoneNumberAndCreatedAtBetweenOrderByCreatedAtDesc(request.getPhoneNumber(), request.getStartCreatedAt(), request.getEndCreatedAt(), PageRequest.of(pageNumber, 50));
         return searchedMessages;
     }
 
@@ -24,7 +24,7 @@ public class ElasticSearchService {
     }
 
     public List<SearchEntity> searchByMessage(SearchRequest request, int pageNumber) {
-        List<SearchEntity> searchByMessage  = searchRepository.findByMessageContaining(request.getMessage(), PageRequest.of(pageNumber, 50));
-        return  searchByMessage;
+        List<SearchEntity> searchByMessage = searchRepository.findByMessageContaining(request.getMessage(), PageRequest.of(pageNumber, 50));
+        return searchByMessage;
     }
 }

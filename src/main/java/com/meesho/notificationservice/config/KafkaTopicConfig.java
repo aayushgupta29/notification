@@ -6,7 +6,7 @@ import org.springframework.kafka.config.TopicBuilder;
 
 public class KafkaTopicConfig {
     @Bean
-    public NewTopic createNewTopic(){
-        return TopicBuilder.name("notification-service").build();
+    public NewKafkaTopic createNewTopic() {
+        return (NewKafkaTopic) TopicBuilder.name("notification-service").build();
     }
 }

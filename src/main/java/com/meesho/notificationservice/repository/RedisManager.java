@@ -6,26 +6,25 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-
 @Service
 public class RedisManager {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
-    public void addInCache(String key){
+    public void addInCache(String key) {
         redisTemplate.opsForValue().set(key, "TRUE");
     }
 
-    public void deleteFromCache(String key){
+    public void deleteFromCache(String key) {
         redisTemplate.delete(key);
     }
 
-    public boolean presentInCache(String key){
+    public boolean presentInCache(String key) {
         return redisTemplate.opsForValue().get(key) != null;
     }
 
-    public Set<String> getAllKeys(){
+    public Set<String> getAllKeys() {
         return redisTemplate.keys("+*");
     }
 }
